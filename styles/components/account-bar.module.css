@@ -1,0 +1,25 @@
+.bar {
+	display: flex;
+	align-items: center;
+}
+
+.bar img {
+	max-height: 85px;
+	border-radius: 100%;
+	margin: 0 25px 0 0;
+	box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;
+}
+
+.bar div {
+	text-align: left;
+	font-weight: bold;
+}
+
+.bar div p {
+	font-size: 1.2rem;
+	margin: 0 0 5px 0;
+}
+
+.bar div a {
+	text-decoration: underline;
+}

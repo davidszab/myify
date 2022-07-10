@@ -1,0 +1,46 @@
+.list {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 1rem;
+}
+
+.list div {
+	flex: 1;
+	text-align: center;
+}
+
+.list div input[type="radio"]{
+	display: none;
+}
+
+.list div input[type="radio"] + label {
+	background-color: black;
+	color: white;
+	display: block;
+	font-weight: bold;
+	padding: 1rem;
+	text-transform: uppercase;
+	white-space: nowrap;
+	cursor: pointer;
+	box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;
+}
+
+.list div:first-child input[type="radio"] + label{
+	border-bottom-left-radius: 150px;
+	border-top-left-radius: 150px;
+}
+
+.list div:last-child input[type="radio"] + label{
+	border-bottom-right-radius: 150px;
+	border-top-right-radius: 150px;
+}
+
+.list div input[type="radio"]:checked + label {
+	background-color: white;
+	color: black;
+}
+
+.list div input[type="radio"]:not(:checked) + label:hover {
+	opacity: 0.75;
+}
