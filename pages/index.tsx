@@ -9,6 +9,9 @@ const Home: NextPage = () => {
 	const router = useRouter();
 	return (
 		<>
+			<Head>
+				<title>Myify</title>
+			</Head>
 			<main>
 				<div className="box" style={{maxWidth: "500px", padding: "20px"}}>
 					<div className={style.brand}>

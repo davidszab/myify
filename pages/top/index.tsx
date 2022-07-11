@@ -5,13 +5,18 @@ import CustomList from "components/custom-list";
 import { useState } from "react";
 import Footer from "components/footer";
 import AccountBar from "components/account-bar";
+import Head from "next/head";
 
 const TopPage: NextPage<{user: User}> = ({user}) => {
 	const [number, setNumber] = useState("10");
 	const [type, setType] = useState("artists");
 	const [time, setTime] = useState("mid");
 	return (
-		<main>
+		<>
+			<Head>
+				<title>Myify</title>
+			</Head>
+			<main>
 			<div className="box" style={{textAlign: "center"}}>
 				<AccountBar user={user}/>
 				<h1>Myify</h1>
@@ -22,6 +27,8 @@ const TopPage: NextPage<{user: User}> = ({user}) => {
 			</div>
 			<Footer/>
 		</main>
+		</>
+		
 	);
 };
 
