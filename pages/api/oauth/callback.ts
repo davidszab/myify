@@ -4,11 +4,12 @@ import { withSessionRoute } from "lib/session-wrapper";
 
 async function handler(req: NextApiRequest, res: NextApiResponse){
 	const {code} = req.query;
+	const { referer } = req.headers;
 	if(!code)
 		return res.status(400).send("Bad request");
 	const params = new URLSearchParams();
 	params.append("code", code.toString());
-	params.append("redirect_uri", process.env.NODE_ENV == "production" ? "https://myify.davidszabo.hu/api/oauth/callback" : "http://localhost:3000/api/oauth/callback");
+	params.append("redirect_uri", `${referer}api/oauth/callback`);
 	params.append("grant_type", "authorization_code");
 	const spotifyResp = await axios.post("https://accounts.spotify.com/api/token", params.toString(), {
 		headers: {

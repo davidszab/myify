@@ -2,13 +2,15 @@ import type { NextPage } from "next";
 import { withSessionSsr } from "lib/session-wrapper";
 import style from "styles/pages/home.module.css";
 import { useRouter } from "next/router";
+import Footer from "components/footer";
+import Head from "next/head";
 
 const Home: NextPage = () => {
 	const router = useRouter();
 	return (
 		<>
 			<main>
-				<div className="box" style={{maxWidth: "500px"}}>
+				<div className="box" style={{maxWidth: "500px", padding: "20px"}}>
 					<div className={style.brand}>
 						<h1>Myify</h1>
 						<h2>Top songs and artists from your Spotify account</h2>
@@ -25,10 +27,10 @@ const Home: NextPage = () => {
 						sign in. Your email address and password are not shared with us.
 					</p>
 					<div className={style.footer}>
-						<p>Spotify is a registered trademark of Spotify AB.<br/>
-						created by Dávid Szilárd Szabó</p>
+						<p>Spotify is a registered trademark of Spotify AB.</p>
 					</div>
 				</div>
+				<Footer/>
 			</main>
 		</>
 	);
