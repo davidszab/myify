@@ -52,17 +52,4 @@ export async function getServerSideProps({req, res}) {
 	return {props: {}}
 }
 
-/*export const getServerSideProps = withSessionSsr(
-//@ts-ignore
-	async function getServerSideProps({req}) {
-		if(req.session.tokens)
-			return {
-				redirect: {
-					destination: "/top"
-				}
-			}
-		return {props: {}};
-	}
-)*/
-
 export default Home;
