@@ -1,5 +1,6 @@
 import { getIronSession, SessionOptions } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
+import { SpotifyToken } from "./spotify";
 
 const options: SessionOptions = {
 	cookieName: "session",
@@ -12,12 +13,6 @@ const options: SessionOptions = {
 interface User {
 	name: string,
 	imgURL: string
-}
-
-interface SpotifyToken {
-	access: string,
-	expiry: number,
-	refresh: string
 }
 
 interface SessionData {
