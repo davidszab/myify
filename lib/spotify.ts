@@ -1,21 +1,7 @@
 import axios from "axios";
 import type {IronSession} from "iron-session";
 
-interface User {
-	name: string,
-	imgURL: string
-}
 
-declare module "iron-session" {
-	interface IronSessionData {
-		tokens?: {
-			access: string,
-			expiry: number
-			refresh: string
-		},
-		user?: User
-	}
-}
 
 async function refreshAccessToken(session: IronSession){
 	if(!session.tokens)
@@ -51,7 +37,6 @@ const getMe = (session: IronSession, forceReload?: boolean): Promise<User> => re
 			Authorization: `Bearer ${session.tokens.access}`
 		}
 	});
-	console.log("getMe(): from WEB API");
 	const {display_name} = resp.data;
 	const imgURL = resp.data.images[0].url;
 	session.user = {name: display_name, imgURL};
@@ -74,21 +59,71 @@ interface Artist {
 	imageURL: string
 }
 
-const getTopArtists = (session: IronSession): Promise<Artist[]> => refreshWrapper(session, async () => {
+interface Track {
+	id: string,
+	artists: Array<{name: string, id: string}>,
+	title: string,
+	album: {title: string, imageURL: string, id: string}
+	previewURL: string
+}
+
+const timeRanges = ["short_term", "medium_term", "long_term"] as const;
+type TimeRangeValue = typeof timeRanges[number];
+const isTimeRange = (x: any): x is TimeRangeValue => timeRanges.includes(x);
+const TimeRanges = timeRanges.join(" OR ");
+
+const itemTypes = ["artists", "tracks"] as const;
+type ItemType = typeof itemTypes[number];
+const isItemType = (x: any): x is ItemType => itemTypes.includes(x);
+
+const getTop = (session: IronSession, type: ItemType, options?: {timeRange?: TimeRangeValue, number?: number}) => refreshWrapper(session, async () => {
 	//default valuse: medium_term, top 20
-	const resp = await axios.get("https://api.spotify.com/v1/me/top/artists", {
+	const query = new URLSearchParams();
+	if(options){
+		if(options.timeRange)
+			query.append("time_range", options.timeRange)
+		if(options.number)
+			query.append("limit", options.number.toString());
+	}
+	const resp = await axios.get(`https://api.spotify.com/v1/me/top/${type}?${query.toString()}`, {
 		headers: {
 			//@ts-ignore
 			Authorization: `Bearer ${session.tokens.access}`
 		}
 	});
-	const items: Artist[] = resp.data.items.map((e: any) => {return {id: e.id, name: e.name, genres: e.genres, imageURL: e.images[0].url}});
+	let items;
+	console.log(resp.data)
+	if(type === "artists")
+		items = resp.data.items.map((e: any):Artist => {return {id: e.id, name: e.name, genres: e.genres, imageURL: e.images[0].url}});
+	if(type === "tracks")
+		items = resp.data.items.map((e: any):Track => {
+			return({
+				id: e.id,
+				artists: e.artists.map((f: any) => {return {name: f.name, id: f.id}}),
+				title: e.name,
+				album: {id: e.album.id, title: e.album.name, imageURL: e.album.images[0].url},
+				previewURL: e.preview_url
+			});
+		});
 	return items;
 });
+//TODO: imageSizes?
 
-export {
-	getMe,
-	getTopArtists,
+const getTopArtists = (session: IronSession, options?: {timeRange?: TimeRangeValue, number?: number}): Promise<Artist[]> => {
+	return getTop(session, "artists", options);
 }
 
-export type {User, Artist};
+const getTopTracks = (session: IronSession, options?: {timeRange?: TimeRangeValue, number?: number}): Promise<Track[]> => {
+	return getTop(session, "tracks", options);
+}
+
+export {
+	TimeRanges,
+	isTimeRange,
+	isItemType,
+	getMe,
+	getTopArtists,
+	getTopTracks
+}
+
+export type {User, Artist, Track, TimeRangeValue, ItemType};
