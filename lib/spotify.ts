@@ -39,7 +39,12 @@ function didAccessTokenExpire(token?: SpotifyToken) {
   return token.expiry <= Date.now();
 }
 
-async function getUser(token: SpotifyToken) {
+interface User {
+  name: string,
+  imgURL: string
+}
+
+async function getUser(token: SpotifyToken): Promise<User> {
   if (!token || didAccessTokenExpire(token)) return null;
 
   const resp = await axios.get("https://api.spotify.com/v1/me", {
@@ -140,5 +145,5 @@ async function getTopTracks(token: SpotifyToken, options?: Options): Promise<Tra
 	return getTop(token, ItemType.Tracks, options);
 }
 
-export {getTopArtists, getTopTracks, getUser, refreshAccessToken, didAccessTokenExpire}
-export type {SpotifyToken, Artist, Track, TimeRange, Options}
+export {getTopArtists, getTopTracks, getUser, refreshAccessToken, didAccessTokenExpire, TimeRange, ItemType}
+export type {SpotifyToken, Artist, Track, Options, User}
