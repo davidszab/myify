@@ -39,6 +39,7 @@ const Home: NextPage = () => {
 	);
 };
 
+//@ts-ignore
 export async function getServerSideProps({req, res}) {
 	const session = await getSession(req, res);
 	if(session.token) {
