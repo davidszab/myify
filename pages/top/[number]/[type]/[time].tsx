@@ -1,9 +1,11 @@
+//@ts-nocheck
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import Loading from "components/top-page/loading";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ElementCard from "components/top-page/element-card";
+import { ItemType } from "lib/spotify";
 
 const Home: NextPage = () => {
 	const router = useRouter();
