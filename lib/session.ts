@@ -1,6 +1,6 @@
 import { getIronSession, SessionOptions } from "iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
-import { SpotifyToken } from "./spotify";
+import { SpotifyToken, User } from "./spotify";
 
 const options: SessionOptions = {
 	cookieName: "session",
@@ -8,11 +8,6 @@ const options: SessionOptions = {
 	cookieOptions: {
 		secure: process.env.NODE_ENV === "production"
 	}
-}
-
-interface User {
-	name: string,
-	imgURL: string
 }
 
 interface SessionData {
@@ -24,4 +19,4 @@ export function getSession(req: NextApiRequest, res: NextApiResponse){
 	return getIronSession<SessionData>(req, res, options);
 }
 
-export type {User, SpotifyToken, SessionData}
+export type {SpotifyToken, SessionData}

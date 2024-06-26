@@ -30,8 +30,9 @@ async function refreshAccessToken(
   );
   const { data } = spotifyResp;
   const access = data.access_token;
+  const refresh = data.refresh_token;
   const expiry = Date.now() + data.expires_in * 1000;
-  return { access, expiry, refresh: refreshToken };
+  return { access, expiry, refresh};
 }
 
 function didAccessTokenExpire(token?: SpotifyToken) {
