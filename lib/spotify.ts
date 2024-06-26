@@ -45,17 +45,17 @@ type APIResult<T> = {
   newToken?: SpotifyToken
 }
 
-async function refreshWrapper<T>(fn: () => Promise<T | null>, token: SpotifyToken): Promise<APIResult<T>>{
+async function refreshWrapper<T>(fn: (token: SpotifyToken) => Promise<T | null>, token: SpotifyToken): Promise<APIResult<T>>{
   if(!token) return {result: null};
 
-  let t;
+  let t = token;
   if(didAccessTokenExpire(token)){
     const newToken = await refreshAccessToken(token.refresh);
     if(newToken)
       t = newToken;
   }
   
-  const result = await fn();
+  const result = await fn(t);
   if(t != token){
     return {
       newToken: t,
@@ -72,10 +72,10 @@ interface User {
   imgURL: string
 }
 
-const getUser = (token: SpotifyToken) => refreshWrapper<User>(async () => {
+const getUser = (token: SpotifyToken) => refreshWrapper<User>(async (t) => {
   const resp = await axios.get("https://api.spotify.com/v1/me", {
     headers: {
-      Authorization: `Bearer ${token.access}`,
+      Authorization: `Bearer ${t.access}`,
     },
   });
 
@@ -113,7 +113,7 @@ interface Options {
 	number?: number
 }
 
-const getTop = (token: SpotifyToken, type: ItemType, options?: Options) => refreshWrapper(async () => {
+const getTop = (token: SpotifyToken, type: ItemType, options?: Options) => refreshWrapper(async (t) => {
   const query = new URLSearchParams();
   if (options?.timeRange)
     query.append("time_range", options.timeRange);
@@ -123,7 +123,7 @@ const getTop = (token: SpotifyToken, type: ItemType, options?: Options) => refre
   const res = await axios.get(`https://api.spotify.com/v1/me/top/${type}?${query.toString()}`,
     {
       headers: {
-        Authorization: `Bearer ${token.access}`,
+        Authorization: `Bearer ${t.access}`,
       },
     }
   );
