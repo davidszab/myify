@@ -44,7 +44,7 @@ interface User {
   imgURL: string
 }
 
-async function getUser(token: SpotifyToken): Promise<User> {
+async function getUser(token: SpotifyToken): Promise<User | null> {
   if (!token || didAccessTokenExpire(token)) return null;
 
   const resp = await axios.get("https://api.spotify.com/v1/me", {

@@ -45,7 +45,7 @@ const TopPage: NextPage<{user: User}> = ({user}) => {
 	else
 		return `Show me the top ${number} ${type} from the past ${time === "short" ? "month" : "6 months"}.`;
 }*/
-
+//@ts-ignore
 export async function getServerSideProps({req, res}){
 	const session = await getSession(req, res);
 	if(!session || !session.token) {

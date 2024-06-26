@@ -1,0 +1,23 @@
+.card {
+	background-color: rgba(255, 255, 255, 0.9);
+	color: black;
+	padding: 0.5rem 2rem;
+	display: flex;
+	margin: 2rem;
+	box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px;
+}
+
+.img-box {
+	flex: 1;
+	text-align: center;
+	padding: 0.5rem;
+}
+
+.img-box img {
+	width: 100%;
+	box-shadow: rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px, rgba(17, 17, 26, 0.1) 0px 24px 80px;
+}
+
+.text-box {
+	flex: 3;
+}

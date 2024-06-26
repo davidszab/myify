@@ -1,7 +1,6 @@
 import type { User } from "lib/spotify";
 import style from "styles/components/account-bar.module.css";
 import Link from "next/link";
-import Image from "next/image";
 
 const AccountBar = ({user}: {user: User}) => {
 	return <div className={style.bar}>
