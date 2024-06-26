@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { withSessionRoute } from "lib/session-wrapper";
+import { getSession } from "lib/session";
 
-function handler(req: NextApiRequest, res: NextApiResponse) {
-	req.session.destroy();
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+	const session = await getSession(req, res); 
+	session.destroy();
 	res.redirect("/");
 }
-
-export default withSessionRoute(handler);

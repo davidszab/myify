@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-import { withSessionRoute } from "lib/session-wrapper";
+import { getSession } from "lib/session";
 
-async function handler(req: NextApiRequest, res: NextApiResponse){
+export default async function handler(req: NextApiRequest, res: NextApiResponse){
+	const session = await getSession(req, res);
 	const {code} = req.query;
 	const { referer } = req.headers;
 	if(!code)
@@ -18,13 +19,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse){
 		}
 	});
 	const {data} = spotifyResp;
-	req.session.tokens = {
+	session.token = {
 		access: data.access_token,
 		expiry: Date.now() + data.expires_in * 1000,
 		refresh: data.refresh_token
 	}
-	await req.session.save();
+	await session.save();
 	res.redirect("/");
 }
-
-export default withSessionRoute(handler);
