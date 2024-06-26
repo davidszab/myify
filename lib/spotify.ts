@@ -40,14 +40,39 @@ function didAccessTokenExpire(token?: SpotifyToken) {
   return token.expiry <= Date.now();
 }
 
+type APIResult<T> = {
+  result: T | null,
+  newToken?: SpotifyToken
+}
+
+async function refreshWrapper<T>(fn: () => Promise<T | null>, token: SpotifyToken): Promise<APIResult<T>>{
+  if(!token) return {result: null};
+
+  let t;
+  if(didAccessTokenExpire(token)){
+    const newToken = await refreshAccessToken(token.refresh);
+    if(newToken)
+      t = newToken;
+  }
+  
+  const result = await fn();
+  if(t != token){
+    return {
+      newToken: t,
+      result
+    }
+  }
+
+  return {result}
+}
+
+
 interface User {
   name: string,
   imgURL: string
 }
 
-async function getUser(token: SpotifyToken): Promise<User | null> {
-  if (!token || didAccessTokenExpire(token)) return null;
-
+const getUser = (token: SpotifyToken) => refreshWrapper<User>(async () => {
   const resp = await axios.get("https://api.spotify.com/v1/me", {
     headers: {
       Authorization: `Bearer ${token.access}`,
@@ -55,7 +80,7 @@ async function getUser(token: SpotifyToken): Promise<User | null> {
   });
 
   return { name: resp.data.display_name, imgURL: resp.data.images[0]?.url };
-}
+}, token);
 
 interface Artist {
   id: string;
@@ -88,19 +113,14 @@ interface Options {
 	number?: number
 }
 
-async function getTop(
-  token: SpotifyToken,
-  type: ItemType,
-  options?: Options
-) {
-  if (!token || didAccessTokenExpire(token)) return null;
-
+const getTop = (token: SpotifyToken, type: ItemType, options?: Options) => refreshWrapper(async () => {
   const query = new URLSearchParams();
-  if (options?.timeRange) query.append("time_range", options.timeRange);
-  if (options?.number) query.append("limit", options.number.toString());
-
-  const res = await axios.get(
-    `https://api.spotify.com/v1/me/top/${type}?${query.toString()}`,
+  if (options?.timeRange)
+    query.append("time_range", options.timeRange);
+  if (options?.number)
+    query.append("limit", options.number.toString());
+  
+  const res = await axios.get(`https://api.spotify.com/v1/me/top/${type}?${query.toString()}`,
     {
       headers: {
         Authorization: `Bearer ${token.access}`,
@@ -136,13 +156,14 @@ async function getTop(
     });
 
 	return null;
-}
 
-async function getTopArtists(token: SpotifyToken, options?: Options): Promise<Artist[] | null>{
+}, token);
+
+async function getTopArtists(token: SpotifyToken, options?: Options): Promise<APIResult<Artist[]>>{
 	return getTop(token, ItemType.Artists, options);
 }
 
-async function getTopTracks(token: SpotifyToken, options?: Options): Promise<Track[] | null>{
+async function getTopTracks(token: SpotifyToken, options?: Options): Promise<APIResult<Track[]>>{
 	return getTop(token, ItemType.Tracks, options);
 }
 

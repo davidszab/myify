@@ -14,8 +14,7 @@ const Home: NextPage = () => {
 
 	useEffect(() => {
 		if(type && number && time){
-			console.log({type, number, time})
-			axios.get(`/api/top/${number}/${type}/${time}`).then((e) => setData(e.data));
+			axios.get(`/api/top/${number}/${type}/${time}`).then((e) => setData(e.data.result));
 		}
 	}, [router]);
 	//todo: check before

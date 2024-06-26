@@ -56,10 +56,15 @@ export async function getServerSideProps({req, res}){
 		}
 	}
 
-	const user = await getUser(session.token);
+	const {result, newToken} = await getUser(session.token);
+	if(newToken){
+		session.token = newToken;
+		await session.save();
+	}
+
 	return {
 		props: {
-			user
+			user: result
 		}
 	}
 }
