@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
-import { withSessionSsr } from "lib/session-wrapper";
 import style from "styles/pages/home.module.css";
 import { useRouter } from "next/router";
 import Footer from "components/footer";
 import Head from "next/head";
+import { getSession } from "lib/session";
 
 const Home: NextPage = () => {
 	const router = useRouter();
@@ -39,7 +39,19 @@ const Home: NextPage = () => {
 	);
 };
 
-export const getServerSideProps = withSessionSsr(
+export async function getServerSideProps({req, res}) {
+	const session = await getSession(req, res);
+	if(session.token) {
+		return {
+			redirect: {
+				destination: "/top"
+			}
+		}
+	}
+	return {props: {}}
+}
+
+/*export const getServerSideProps = withSessionSsr(
 //@ts-ignore
 	async function getServerSideProps({req}) {
 		if(req.session.tokens)
@@ -50,6 +62,6 @@ export const getServerSideProps = withSessionSsr(
 			}
 		return {props: {}};
 	}
-)
+)*/
 
 export default Home;
